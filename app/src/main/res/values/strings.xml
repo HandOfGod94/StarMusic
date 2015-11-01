@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">StarMusic</string>
+
+    <string name="title">00.Untitled</string>
+    <string name="album">Unknown Album</string>
+    <string name="artist">Unknown Artist</string>
+
+    <string name="play">&gt;</string>
+    <string name="pause">&#124; &#124;</string>
+    <string name="next">&gt;&gt;&#124;</string>
+    <string name="previous">&#124;&lt;&lt;</string>
+
+</resources>

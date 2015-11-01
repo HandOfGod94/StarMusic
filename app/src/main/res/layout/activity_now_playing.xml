@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".NowPlayingActivity">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/background"
+        android:scaleType="centerCrop"
+        android:alpha="0.40"/>
+
+    <fragment
+        android:id="@+id/fragment_player_controls"
+        android:name="com.starlord.starmusic.PlayerControlsFragment"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"/>
+
+    <fragment
+        android:id="@+id/fragment_song_info"
+        android:name="com.starlord.starmusic.SongInfoFragment"
+        android:layout_above="@id/fragment_player_controls"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"/>
+
+</RelativeLayout>

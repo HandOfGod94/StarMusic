@@ -1,0 +1,9 @@
+<resources>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="button_text_size">35dp</dimen>
+    <dimen name="default_padding">20dp</dimen>
+    <dimen name="image_view_dimen">150dp</dimen>
+    <dimen name="regular_font">17dp</dimen>
+    <dimen name="large_font">20dp</dimen>
+</resources>

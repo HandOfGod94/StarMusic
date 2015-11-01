@@ -1,0 +1,59 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context="com.starlord.starmusic.PlayerControlsFragment">
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="left|top"
+        android:stretchColumns="0,1,2"
+        android:padding="10dp">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <SeekBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/seekBar"
+                android:layout_span="3"
+                android:paddingBottom="10dp"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="10dp">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/previous"
+                android:id="@+id/buttonPrevious"
+                android:textSize="@dimen/button_text_size"
+                android:textStyle="bold"
+                android:background="@android:color/transparent"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/play"
+                android:id="@+id/buttonPlayPause"
+                android:textSize="@dimen/button_text_size"
+                android:textStyle="bold"
+                android:background="@android:color/transparent"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/next"
+                android:id="@+id/buttonNext"
+                android:textSize="@dimen/button_text_size"
+                android:textStyle="bold"
+                android:background="@android:color/transparent"/>
+        </TableRow>
+    </TableLayout>
+</FrameLayout>
