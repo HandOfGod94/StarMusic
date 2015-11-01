@@ -10,4 +10,6 @@
     <string name="next">&gt;&gt;&#124;</string>
     <string name="previous">&#124;&lt;&lt;</string>
 
+    <string name="time">00:00</string>
+
 </resources>
