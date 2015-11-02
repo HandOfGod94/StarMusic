@@ -4,4 +4,6 @@
         <item name="android:actionBarTheme">@android:style/Theme.Holo.Light.DarkActionBar</item>
     </style>
 
+   <style name="AppBaseTheme.NoActionBar" parent="android:Theme.Holo.NoActionBar"/>
+
 </resources>

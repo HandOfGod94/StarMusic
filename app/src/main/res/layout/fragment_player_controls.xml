@@ -44,13 +44,15 @@
                 android:id="@+id/seekBar"
                 android:layout_span="3"
                 android:paddingBottom="10dp"
-                android:paddingLeft="10dp"/>
+                android:paddingLeft="10dp"
+                android:focusableInTouchMode="false"/>
         </TableRow>
 
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingBottom="10dp">
+            android:paddingBottom="10dp"
+            android:longClickable="false">
 
             <Button
                 android:layout_width="wrap_content"

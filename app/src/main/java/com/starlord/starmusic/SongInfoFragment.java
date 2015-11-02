@@ -55,7 +55,7 @@ public class SongInfoFragment extends Fragment
 
     /**
      * This method reads ID3 tags from mp3 and assigne it to appropriate values
-     * @param context application context
+     * @param context activity context
      * @param filePath Uri of source
      */
     private void setMetaData(Context context,Uri filePath)

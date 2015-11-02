@@ -23,13 +23,17 @@ import java.util.concurrent.TimeUnit;
  */
 public class PlayerControlsFragment extends Fragment
 {
-    View fragmentView;
-    MediaPlayer mediaPlayer;
-    SeekBar seekBar;
-    TextView textViewCurrentTime;
-    Handler handler = new Handler();
+    public long totalDuration, totalMinute,totalSeconds;
+    public MediaPlayer mediaPlayer;
 
-    public long totalMinute,totalSeconds;
+    private View fragmentView;
+    private Handler handler = new Handler();
+
+    protected SeekBar seekBar;
+    protected TextView textViewCurrentTime;
+
+    public static final String PLAY = ">";
+    public static final String PAUSE = "| |";
 
     public PlayerControlsFragment()
     {
@@ -48,13 +52,17 @@ public class PlayerControlsFragment extends Fragment
         TextView textViewTotalTime = (TextView) fragmentView.findViewById(R.id.textViewTotalTime);
         textViewCurrentTime = (TextView) fragmentView.findViewById(R.id.textViewCurrentTime);
 
-        totalMinute = TimeUnit.MILLISECONDS.toMinutes(mediaPlayer.getDuration());
-        totalSeconds = TimeUnit.MILLISECONDS.toSeconds(mediaPlayer.getDuration()) % 60L;
-
+        //Get total duration of currently playing song in milliseconds and
+        // calculate total minutes ans total seconds and update it's TextView
+        totalDuration = mediaPlayer.getDuration();
+        totalMinute = TimeUnit.MILLISECONDS.toMinutes(totalDuration);
+        totalSeconds = TimeUnit.MILLISECONDS.toSeconds(totalDuration) % 60L;
         textViewTotalTime.setText(String.format("%02d:%02d",totalMinute,totalSeconds));
 
+        //action handling event calls
         Button buttonPlayPause = (Button) fragmentView.findViewById(R.id.buttonPlayPause);
         actionPlayPause(buttonPlayPause);
+        actionSeekBar(seekBar);
 
         return fragmentView;
     }
@@ -66,25 +74,60 @@ public class PlayerControlsFragment extends Fragment
      * current media player.
      * @param button play/pause button obtained from finding by id.
      */
-    public void actionPlayPause(final Button button)
+    protected void actionPlayPause(final Button button)
     {
         button.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                if (button.getText().equals(">"))
+                if (button.getText().equals(PLAY))
                 {
                     mediaPlayer.start();
-                    button.setText("| |");
+                    button.setText(PAUSE);
                 }
 
-                else if(button.getText().equals("| |"))
+                else if(button.getText().equals(PAUSE))
                 {
                     mediaPlayer.pause();
-                    button.setText(">");
+                    button.setText(PLAY);
                 }
-                handler.postDelayed(UpdateProgress,100);
+                handler.postDelayed(UpdateProgress,15);
+            }
+        });
+    }
+
+
+    /**
+     * This method is responsible for handling Seek Bar press
+     * and drag events which will change current time of media being played.
+     * @param seekBar seek bar which is to be controlled
+     */
+    protected void actionSeekBar(SeekBar seekBar)
+    {
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
+        {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
+            {
+                if(fromUser)
+                {
+                    int currentMilliSec = (int) Math.ceil((seekBar.getProgress()/100F)*totalDuration);
+                    mediaPlayer.seekTo(currentMilliSec);
+                }
+            }
+
+            //These methods are helpful in changing textViewElapsedTime when user starts dragging.
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar)
+            {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar)
+            {
+
             }
         });
     }
@@ -110,8 +153,8 @@ public class PlayerControlsFragment extends Fragment
             long currentSecond = TimeUnit.MILLISECONDS.toSeconds(currentTime) % 60L;
             textViewCurrentTime.setText(String.format("%02d:%02d",currentMinute,currentSecond));
 
-            //Repeat this every 100ms
-            handler.postDelayed(this,100);
+            //Repeat this every 15ms
+            handler.postDelayed(this,15);
         }
     };
 }
