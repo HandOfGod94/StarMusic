@@ -1,16 +1,18 @@
 package com.starlord.starmusic;
 
 
+import android.content.res.Configuration;
+import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.os.Handler;
-import android.text.format.Time;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -32,12 +34,19 @@ public class PlayerControlsFragment extends Fragment
     protected SeekBar seekBar;
     protected TextView textViewCurrentTime;
 
-    public static final String PLAY = ">";
-    public static final String PAUSE = "| |";
+    public Drawable drawablePlay,drawablePause;
+    public ImageView buttonPlay, buttonPause;
 
     public PlayerControlsFragment()
     {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+//        setRetainInstance(true);
     }
 
     @Override
@@ -46,6 +55,10 @@ public class PlayerControlsFragment extends Fragment
     {
         fragmentView = inflater.inflate(R.layout.fragment_player_controls, container, false);
         Uri filePath = Uri.parse("android.resource://com.starlord.starmusic/" + R.raw.song );
+
+        //Initialize play and pause drawable so it can be used during clicking event
+        drawablePause = fragmentView.getResources().getDrawable(R.drawable.pause);
+        drawablePlay = fragmentView.getResources().getDrawable(R.drawable.play);
 
         mediaPlayer = MediaPlayer.create(getActivity(),filePath);
         seekBar = (SeekBar) fragmentView.findViewById(R.id.seekBar);
@@ -60,39 +73,42 @@ public class PlayerControlsFragment extends Fragment
         textViewTotalTime.setText(String.format("%02d:%02d",totalMinute,totalSeconds));
 
         //action handling event calls
-        Button buttonPlayPause = (Button) fragmentView.findViewById(R.id.buttonPlayPause);
-        actionPlayPause(buttonPlayPause);
+        buttonPlay = (ImageView) fragmentView.findViewById(R.id.buttonPlay);
+        buttonPause = (ImageView) fragmentView.findViewById(R.id.buttonPause);
+        actionPlayPause();
         actionSeekBar(seekBar);
 
         return fragmentView;
     }
 
-
     /**
+     *
      * This method defines click listener action for
      * play pause button and take action accordingly for
      * current media player.
-     * @param button play/pause button obtained from finding by id.
      */
-    protected void actionPlayPause(final Button button)
+    protected void actionPlayPause()
     {
-        button.setOnClickListener(new View.OnClickListener()
+        buttonPlay.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                if (button.getText().equals(PLAY))
-                {
-                    mediaPlayer.start();
-                    button.setText(PAUSE);
-                }
+                mediaPlayer.start();
+                buttonPlay.setVisibility(View.INVISIBLE);
+                buttonPause.setVisibility(View.VISIBLE);
+                handler.postDelayed(UpdateProgress,100);
+            }
+        });
 
-                else if(button.getText().equals(PAUSE))
-                {
-                    mediaPlayer.pause();
-                    button.setText(PLAY);
-                }
-                handler.postDelayed(UpdateProgress,15);
+        buttonPause.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                mediaPlayer.pause();
+                buttonPause.setVisibility(View.INVISIBLE);
+                buttonPlay.setVisibility(View.VISIBLE);
             }
         });
     }
@@ -112,7 +128,7 @@ public class PlayerControlsFragment extends Fragment
             {
                 if(fromUser)
                 {
-                    int currentMilliSec = (int) Math.ceil((seekBar.getProgress()/100F)*totalDuration);
+                    int currentMilliSec = (int) Math.floor((seekBar.getProgress()/100F)*totalDuration);
                     mediaPlayer.seekTo(currentMilliSec);
                 }
             }
@@ -143,7 +159,7 @@ public class PlayerControlsFragment extends Fragment
         {
             long currentTime = mediaPlayer.getCurrentPosition();
             long totalTime = mediaPlayer.getDuration();
-            long progress = (long) (Math.ceil(currentTime*100F / totalTime));
+            long progress = (long) (Math.floor(currentTime*100F / totalTime));
 
             //Update Seek bar
             seekBar.setProgress((int) progress);
@@ -154,7 +170,7 @@ public class PlayerControlsFragment extends Fragment
             textViewCurrentTime.setText(String.format("%02d:%02d",currentMinute,currentSecond));
 
             //Repeat this every 15ms
-            handler.postDelayed(this,15);
+            handler.postDelayed(this,100);
         }
     };
 }

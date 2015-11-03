@@ -43,43 +43,48 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/seekBar"
                 android:layout_span="3"
-                android:paddingBottom="10dp"
                 android:paddingLeft="10dp"
+                android:paddingRight="20dp"
                 android:focusableInTouchMode="false"/>
         </TableRow>
 
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingBottom="10dp"
-            android:longClickable="false">
+            android:longClickable="false"
+            android:paddingBottom="10dp">
 
-            <Button
+            <ImageView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/previous"
+                android:layout_height="30dp"
                 android:id="@+id/buttonPrevious"
-                android:textSize="@dimen/button_text_size"
-                android:textStyle="bold"
-                android:background="@android:color/transparent"/>
+                android:src="@drawable/back"/>
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/play"
-                android:id="@+id/buttonPlayPause"
-                android:textSize="@dimen/button_text_size"
-                android:textStyle="bold"
-                android:background="@android:color/transparent"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_column="1">
 
-            <Button
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/buttonPlay"
+                    android:src="@drawable/play"/>
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/buttonPause"
+                    android:src="@drawable/pause"
+                    android:visibility="invisible"/>
+            </RelativeLayout>
+
+            <ImageView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/next"
+                android:layout_height="30dp"
                 android:id="@+id/buttonNext"
-                android:textSize="@dimen/button_text_size"
-                android:textStyle="bold"
-                android:background="@android:color/transparent"/>
+                android:src="@drawable/next"
+                android:layout_column="2"/>
         </TableRow>
 
     </TableLayout>

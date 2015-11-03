@@ -8,11 +8,14 @@ import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.util.HashMap;
 
 
 /**
@@ -32,6 +35,13 @@ public class SongInfoFragment extends Fragment
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+//        setRetainInstance(true);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
@@ -44,14 +54,13 @@ public class SongInfoFragment extends Fragment
 
         setMetaData(getActivity(),filePath);
 
-        textViewTitle.setText(title);
-        textViewAlbum.setText(album);
-        textViewArtist.setText(artist);
-        imageViewAlbumArt.setImageBitmap(albumArt);
+        if(title!=null) textViewTitle.setText(title);
+        if(album!=null) textViewAlbum.setText(album);
+        if(artist!=null) textViewArtist.setText(artist);
+        if(albumArt!=null) imageViewAlbumArt.setImageBitmap(albumArt);
 
         return fragmentView;
     }
-
 
     /**
      * This method reads ID3 tags from mp3 and assigne it to appropriate values
