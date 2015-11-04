@@ -34,7 +34,6 @@ public class PlayerControlsFragment extends Fragment
     protected SeekBar seekBar;
     protected TextView textViewCurrentTime;
 
-    public Drawable drawablePlay,drawablePause;
     public ImageView buttonPlay, buttonPause;
 
     public PlayerControlsFragment()
@@ -55,10 +54,6 @@ public class PlayerControlsFragment extends Fragment
     {
         fragmentView = inflater.inflate(R.layout.fragment_player_controls, container, false);
         Uri filePath = Uri.parse("android.resource://com.starlord.starmusic/" + R.raw.song );
-
-        //Initialize play and pause drawable so it can be used during clicking event
-        drawablePause = fragmentView.getResources().getDrawable(R.drawable.pause);
-        drawablePlay = fragmentView.getResources().getDrawable(R.drawable.play);
 
         mediaPlayer = MediaPlayer.create(getActivity(),filePath);
         seekBar = (SeekBar) fragmentView.findViewById(R.id.seekBar);

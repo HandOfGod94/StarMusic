@@ -1,6 +1,7 @@
 package com.starlord.starmusic;
 
 import android.app.Activity;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 
 public class NowPlayingActivity extends Activity
@@ -12,5 +13,11 @@ public class NowPlayingActivity extends Activity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_now_playing);
+    }
+
+    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
     }
 }
