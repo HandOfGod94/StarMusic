@@ -19,5 +19,6 @@ public class NowPlayingActivity extends Activity
     protected void onDestroy()
     {
         super.onDestroy();
+
     }
 }
