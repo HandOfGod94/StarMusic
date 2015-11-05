@@ -1,0 +1,86 @@
+<TableLayout
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="left|top"
+    android:stretchColumns="0,1,2"
+    android:padding="10dp"
+    android:paddingBottom="20dp"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/time"
+            android:id="@+id/textViewCurrentPostion"
+            android:textAlignment="textStart"
+            android:textSize="@dimen/regular_font"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/time"
+            android:id="@+id/textViewTotalTime"
+            android:layout_column="2"
+            android:textAlignment="textEnd"
+            android:textSize="@dimen/regular_font"/>
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <SeekBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/seekBar"
+            android:layout_span="3"
+            android:paddingLeft="10dp"
+            android:paddingRight="20dp"
+            android:focusableInTouchMode="false"/>
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:longClickable="false"
+        android:paddingBottom="10dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:id="@+id/imageViewPrevious"
+            android:src="@drawable/back"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_column="1">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/imageViewPlay"
+                android:src="@drawable/play"
+                android:onClick="onPlay"/>
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/imageViewPause"
+                android:src="@drawable/pause"
+                android:onClick="onPause"/>
+        </RelativeLayout>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:id="@+id/imageViewNext"
+            android:src="@drawable/next"
+            android:layout_column="2"/>
+    </TableRow>
+
+</TableLayout>

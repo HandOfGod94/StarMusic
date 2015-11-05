@@ -2,6 +2,7 @@ package com.starlord.starmusic;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
@@ -19,7 +20,7 @@ import java.util.HashMap;
 
 
 /**
- * This fragment is responsible for initialing and retriving
+ * This fragment is responsible for initialing and retrieving
  * song details
  */
 public class SongInfoFragment extends Fragment
@@ -29,16 +30,11 @@ public class SongInfoFragment extends Fragment
     protected String title,artist,album;
     protected Bitmap albumArt;
 
+    private TextView textViewTitle,textViewAlbum,textViewArtist;
+
     public SongInfoFragment()
     {
         // Required empty public constructor
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-//        setRetainInstance(true);
     }
 
     @Override
@@ -47,12 +43,12 @@ public class SongInfoFragment extends Fragment
     {
         fragmentView = inflater.inflate(R.layout.fragment_song_info,container,false);
         Uri filePath = Uri.parse("android.resource://com.starlord.starmusic/" + R.raw.song );
-        TextView textViewTitle = (TextView) fragmentView.findViewById(R.id.textViewTitle);
-        TextView textViewAlbum = (TextView) fragmentView.findViewById(R.id.textViewAlbum);
-        TextView textViewArtist = (TextView) fragmentView.findViewById(R.id.textViewArtist);
+        textViewTitle = (TextView) fragmentView.findViewById(R.id.textViewTitle);
+        textViewAlbum = (TextView) fragmentView.findViewById(R.id.textViewAlbum);
+        textViewArtist = (TextView) fragmentView.findViewById(R.id.textViewArtist);
         ImageView imageViewAlbumArt = (ImageView) fragmentView.findViewById(R.id.imageViewAlbumArt);
 
-        setMetaData(getActivity(),filePath);
+        setMetaData(getActivity());
 
         if(title!=null) textViewTitle.setText(title);
         if(album!=null) textViewAlbum.setText(album);
@@ -65,13 +61,14 @@ public class SongInfoFragment extends Fragment
     /**
      * This method reads ID3 tags from mp3 and assigne it to appropriate values
      * @param context activity context
-     * @param filePath Uri of source
      */
-    private void setMetaData(Context context,Uri filePath)
+    private void setMetaData(Context context)
     {
 
         MediaMetadataRetriever metadataRetriever = new MediaMetadataRetriever();
-        metadataRetriever.setDataSource(context, filePath);
+//        metadataRetriever.setDataSource(context, filePath);
+        AssetFileDescriptor fileDescriptor = context.getResources().openRawResourceFd(R.raw.song);
+        metadataRetriever.setDataSource(fileDescriptor.getFileDescriptor(),fileDescriptor.getStartOffset(),fileDescriptor.getLength());
 
         title = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
         album = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);

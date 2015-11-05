@@ -54,11 +54,10 @@
             android:paddingLeft="10dp"
             />
 
-        <fragment
+        <include
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:name="com.starlord.starmusic.PlayerControlsFragment"
-            android:id="@+id/fragment"
+            layout="@layout/player_controls"
             android:layout_below="@+id/textViewArtist"
             android:layout_toEndOf="@+id/imageViewAlbumArt"/>
 
