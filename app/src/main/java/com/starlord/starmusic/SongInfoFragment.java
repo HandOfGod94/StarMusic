@@ -1,22 +1,17 @@
 package com.starlord.starmusic;
 
-import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
-import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import java.util.HashMap;
 
 
 /**
@@ -28,6 +23,7 @@ public class SongInfoFragment extends Fragment
     private View fragmentView;
 
     protected String title,artist,album;
+    protected int track = -1;
     protected Bitmap albumArt;
 
     private TextView textViewTitle,textViewAlbum,textViewArtist;
@@ -48,9 +44,11 @@ public class SongInfoFragment extends Fragment
         textViewArtist = (TextView) fragmentView.findViewById(R.id.textViewArtist);
         ImageView imageViewAlbumArt = (ImageView) fragmentView.findViewById(R.id.imageViewAlbumArt);
 
-        setMetaData(getActivity());
+        setMetaData(getActivity(),filePath);
 
-        if(title!=null) textViewTitle.setText(title);
+        String trackString = (track==-1)?"--":String.format("%02d",track);
+        String titleString  = trackString +". "+ title;
+        if(title!=null) textViewTitle.setText(titleString);
         if(album!=null) textViewAlbum.setText(album);
         if(artist!=null) textViewArtist.setText(artist);
         if(albumArt!=null) imageViewAlbumArt.setImageBitmap(albumArt);
@@ -59,17 +57,17 @@ public class SongInfoFragment extends Fragment
     }
 
     /**
-     * This method reads ID3 tags from mp3 and assigne it to appropriate values
+     * This method reads ID3 tags from mp3 and assign it to appropriate values
      * @param context activity context
+     * @param filePath Uri of input file
      */
-    private void setMetaData(Context context)
+    private void setMetaData(Context context,Uri filePath)
     {
 
         MediaMetadataRetriever metadataRetriever = new MediaMetadataRetriever();
-//        metadataRetriever.setDataSource(context, filePath);
-        AssetFileDescriptor fileDescriptor = context.getResources().openRawResourceFd(R.raw.song);
-        metadataRetriever.setDataSource(fileDescriptor.getFileDescriptor(),fileDescriptor.getStartOffset(),fileDescriptor.getLength());
+        metadataRetriever.setDataSource(context, filePath);
 
+        track = Integer.parseInt(metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_CD_TRACK_NUMBER));
         title = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
         album = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
         artist = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST);
