@@ -18,11 +18,6 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name=".com.starlord.starmusic.services.MediaService"
-            android:enabled="true"
-            android:exported="false" >
-        </service>
     </application>
 
 </manifest>
