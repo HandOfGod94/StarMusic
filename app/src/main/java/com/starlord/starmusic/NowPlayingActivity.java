@@ -9,24 +9,30 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.starlord.starmusic.com.starlord.starmusic.utility.UpdateProgress;
+
 import java.util.concurrent.TimeUnit;
 
 public class NowPlayingActivity extends Activity
 {
     public static final String KEY_CURRENT_POSITION = "com.starlod.starmusic.CURRENT_POSITION";
     public static final String KEY_IS_PLAYING = "com.starlord.starmusic.IS_PLAYING";
-
+    public static final String SONG_PATH = "com.starlord.starmusic.SONG_PATH";
     public int currentPosition = -1;
-    public boolean isPlaying  = false;
+    public boolean isPlaying = false;
 
     private MediaPlayer mediaPlayer;
 
-    private ImageView imageViewPlay,imageViewPause,imageViewPrevious,imageViewNext;
-    private TextView textViewCurrentPosition,textViewTotalDuration;
+    private ImageView imageViewPlay, imageViewPause, imageViewPrevious, imageViewNext;
+    private TextView textViewCurrentPosition, textViewTotalDuration;
     private SeekBar seekBar;
 
-    private Handler handler;
-    public long totalDuration, totalMinute,totalSeconds;
+    public static Handler handler;
+    protected long totalDuration, totalMinute, totalSeconds;
+
+
+    //test feature
+    UpdateProgress updateProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -35,7 +41,7 @@ public class NowPlayingActivity extends Activity
         setContentView(R.layout.activity_now_playing);
 
         //Check if previous instance is running. Helpful in case of orientation change.
-        if(savedInstanceState!=null)
+        if (savedInstanceState != null)
         {
             currentPosition = savedInstanceState.getInt(KEY_CURRENT_POSITION);
             isPlaying = savedInstanceState.getBoolean(KEY_IS_PLAYING);
@@ -49,23 +55,23 @@ public class NowPlayingActivity extends Activity
         textViewTotalDuration = (TextView) findViewById(R.id.textViewTotalTime);
         textViewCurrentPosition = (TextView) findViewById(R.id.textViewCurrentPostion);
         seekBar = (SeekBar) findViewById(R.id.seekBar);
-        mediaPlayer = MediaPlayer.create(this,R.raw.song);
+        mediaPlayer = MediaPlayer.create(this, R.raw.song);
         handler = new Handler();
+        updateProgress = new UpdateProgress(mediaPlayer, textViewCurrentPosition, seekBar);
 
 
         //Actions to be performed and view restoring if previous instance was running.
         //Helpful in orientation change
-        if(isPlaying)
+        if (isPlaying)
         {
             mediaPlayer.seekTo(currentPosition);
             mediaPlayer.start();
             imageViewPlay.setVisibility(View.GONE);
             imageViewPause.setVisibility(View.VISIBLE);
-            handler.postDelayed(UpdateProgress,100);
-        }
-        else
+            handler.postDelayed(updateProgress, 100);
+        } else
         {
-            if(savedInstanceState!=null && currentPosition !=-1)
+            if (savedInstanceState != null && currentPosition != -1)
                 mediaPlayer.seekTo(currentPosition);
             imageViewPause.setVisibility(View.GONE);
             imageViewPlay.setVisibility(View.VISIBLE);
@@ -76,7 +82,7 @@ public class NowPlayingActivity extends Activity
         totalDuration = mediaPlayer.getDuration();
         totalMinute = TimeUnit.MILLISECONDS.toMinutes(totalDuration);
         totalSeconds = TimeUnit.MILLISECONDS.toSeconds(totalDuration) % 60L;
-        textViewTotalDuration.setText(String.format("%02d:%02d",totalMinute,totalSeconds));
+        textViewTotalDuration.setText(String.format("%02d:%02d", totalMinute, totalSeconds));
 
         seekBarProgress();
     }
@@ -98,33 +104,35 @@ public class NowPlayingActivity extends Activity
         //Release media player to free resource
         mediaPlayer.release();
         //stop handler thread
-        handler.removeCallbacks(UpdateProgress);
+        handler.removeCallbacks(updateProgress);
         super.onDestroy();
     }
 
     /**
      * Handles the click event of play button
+     *
      * @param view
      */
     public void onPlay(View view)
     {
-        if(!mediaPlayer.isPlaying())
+        if (!mediaPlayer.isPlaying())
         {
             //switching between play and pause image views.
             imageViewPlay.setVisibility(View.GONE);
             imageViewPause.setVisibility(View.VISIBLE);
             mediaPlayer.start();
-            handler.postDelayed(UpdateProgress, 100);
+            handler.postDelayed(updateProgress, 100);
         }
     }
 
     /**
      * Handles the click event of pause button
+     *
      * @param view
      */
     public void onPause(View view)
     {
-        if(mediaPlayer.isPlaying())
+        if (mediaPlayer.isPlaying())
         {
             //switching between pause and play image views.
             imageViewPause.setVisibility(View.GONE);
@@ -172,28 +180,29 @@ public class NowPlayingActivity extends Activity
         });
 
     }
-    /**
-     * This interface is responsible for updating seek bar and
-     * elapsed time of currently playing song.
-     */
-    private Runnable UpdateProgress = new Runnable()
-    {
-        @Override
-        public void run()
-        {
-            long currentPosition = mediaPlayer.getCurrentPosition();
-            long progress = (long) (Math.floor(currentPosition*100F / totalDuration));
 
-            //Update Seek bar
-            seekBar.setProgress((int) progress);
-
-            //Update elapsed time
-            long currentMinute = TimeUnit.MILLISECONDS.toMinutes(currentPosition);
-            long currentSecond = TimeUnit.MILLISECONDS.toSeconds(currentPosition) % 60L;
-            textViewCurrentPosition.setText(String.format("%02d:%02d",currentMinute,currentSecond));
-
-            //Repeat this every 100ms
-            handler.postDelayed(this, 100);
-        }
-    };
+//    /**
+//     * This interface is responsible for updating seek bar and
+//     * elapsed time of currently playing song.
+//     */
+//    private Runnable UpdateProgress = new Runnable()
+//    {
+//        @Override
+//        public void run()
+//        {
+//            long currentPosition = mediaPlayer.getCurrentPosition();
+//            long progress = (long) (Math.floor(currentPosition*100F / totalDuration));
+//
+//            //Update Seek bar
+//            seekBar.setProgress((int) progress);
+//
+//            //Update elapsed time
+//            long currentMinute = TimeUnit.MILLISECONDS.toMinutes(currentPosition);
+//            long currentSecond = TimeUnit.MILLISECONDS.toSeconds(currentPosition) % 60L;
+//            textViewCurrentPosition.setText(String.format("%02d:%02d",currentMinute,currentSecond));
+//
+//            //Repeat this every 100ms
+//            handler.postDelayed(this, 100);
+//        }
+//    };
 }

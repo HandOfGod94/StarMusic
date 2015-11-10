@@ -49,8 +49,8 @@ public class SongInfoFragment extends Fragment
         String trackString = (track==-1)?"--":String.format("%02d",track);
         String titleString  = trackString +". "+ title;
         if(title!=null) textViewTitle.setText(titleString);
-        if(album!=null) textViewAlbum.setText(album);
-        if(artist!=null) textViewArtist.setText(artist);
+        if(album!=null) textViewAlbum.setText("Album: "+ album);
+        if(artist!=null) textViewArtist.setText("Artist: " + artist);
         if(albumArt!=null) imageViewAlbumArt.setImageBitmap(albumArt);
 
         return fragmentView;

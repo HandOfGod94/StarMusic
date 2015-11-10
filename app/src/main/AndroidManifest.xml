@@ -8,14 +8,21 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppBaseTheme.NoActionBar" >
-        <activity android:name=".NowPlayingActivity"
-            android:configChanges="orientation|layoutDirection">
+        <activity
+            android:name=".NowPlayingActivity"
+            android:configChanges="orientation|layoutDirection" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".com.starlord.starmusic.services.MediaService"
+            android:enabled="true"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>
