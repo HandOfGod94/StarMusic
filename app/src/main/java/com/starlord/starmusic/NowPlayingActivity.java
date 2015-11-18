@@ -2,15 +2,19 @@ package com.starlord.starmusic;
 
 import android.app.Activity;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.starlord.starmusic.com.starlord.starmusic.com.starlord.starmusic.services.BitmapRescaleTask;
 import com.starlord.starmusic.com.starlord.starmusic.utility.UpdateProgress;
 
+import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 public class NowPlayingActivity extends Activity
@@ -18,16 +22,15 @@ public class NowPlayingActivity extends Activity
     public static final String KEY_CURRENT_POSITION = "com.starlod.starmusic.CURRENT_POSITION";
     public static final String KEY_IS_PLAYING = "com.starlord.starmusic.IS_PLAYING";
     public static final String SONG_PATH = "com.starlord.starmusic.SONG_PATH";
-    public int currentPosition = -1;
-    public boolean isPlaying = false;
 
     private MediaPlayer mediaPlayer;
 
-    private ImageView imageViewPlay, imageViewPause, imageViewPrevious, imageViewNext;
+    private ImageView imageViewPlay, imageViewPause, imageViewPrevious, imageViewNext, imageViewBackground;
     private TextView textViewCurrentPosition, textViewTotalDuration;
     private SeekBar seekBar;
 
-    public static Handler handler;
+    public static Handler updateProgressHandler;
+    public BitmapRescaleTask bitmapRescaleTask;
     protected long totalDuration, totalMinute, totalSeconds;
 
 
@@ -40,42 +43,23 @@ public class NowPlayingActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_now_playing);
 
-        //Check if previous instance is running. Helpful in case of orientation change.
-        if (savedInstanceState != null)
-        {
-            currentPosition = savedInstanceState.getInt(KEY_CURRENT_POSITION);
-            isPlaying = savedInstanceState.getBoolean(KEY_IS_PLAYING);
-        }
-
         //Initialize UI Components
         imageViewPlay = (ImageView) findViewById(R.id.imageViewPlay);
         imageViewPause = (ImageView) findViewById(R.id.imageViewPause);
         imageViewNext = (ImageView) findViewById(R.id.imageViewNext);
         imageViewPrevious = (ImageView) findViewById(R.id.imageViewPrevious);
+        imageViewBackground = (ImageView) findViewById(R.id.imageViewBackground);
         textViewTotalDuration = (TextView) findViewById(R.id.textViewTotalTime);
         textViewCurrentPosition = (TextView) findViewById(R.id.textViewCurrentPostion);
         seekBar = (SeekBar) findViewById(R.id.seekBar);
-        mediaPlayer = MediaPlayer.create(this, R.raw.song);
-        handler = new Handler();
+
+        //TODO test feature
+        testFeature();
+
+        mediaPlayer = MediaPlayer.create(this, Uri.fromFile(new File(Environment.getExternalStorageDirectory().getPath()+"/Music/song.mp3")));
+        updateProgressHandler = new Handler();
         updateProgress = new UpdateProgress(mediaPlayer, textViewCurrentPosition, seekBar);
 
-
-        //Actions to be performed and view restoring if previous instance was running.
-        //Helpful in orientation change
-        if (isPlaying)
-        {
-            mediaPlayer.seekTo(currentPosition);
-            mediaPlayer.start();
-            imageViewPlay.setVisibility(View.GONE);
-            imageViewPause.setVisibility(View.VISIBLE);
-            handler.postDelayed(updateProgress, 100);
-        } else
-        {
-            if (savedInstanceState != null && currentPosition != -1)
-                mediaPlayer.seekTo(currentPosition);
-            imageViewPause.setVisibility(View.GONE);
-            imageViewPlay.setVisibility(View.VISIBLE);
-        }
 
         //Get total duration of currently playing song in milliseconds and
         // calculate total minutes ans total seconds and update it's TextView
@@ -88,12 +72,31 @@ public class NowPlayingActivity extends Activity
     }
 
     @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState)
+    {
+        super.onRestoreInstanceState(savedInstanceState);
+        int currentPosition = savedInstanceState.getInt(KEY_CURRENT_POSITION);
+        boolean isPlaying = savedInstanceState.getBoolean(KEY_IS_PLAYING);
+
+        //Actions to be performed and view restoring if previous instance was running.
+        //Helpful in orientation change
+        if (isPlaying)
+        {
+            mediaPlayer.seekTo(currentPosition);
+            mediaPlayer.start();
+            imageViewPlay.setVisibility(View.GONE);
+            imageViewPause.setVisibility(View.VISIBLE);
+            updateProgressHandler.postDelayed(updateProgress, 100);
+        }
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState)
     {
         super.onSaveInstanceState(outState);
 
         //store isPlaying() and currentPosition() in order to save state
-        // on orientatoin change.
+        // on orientation change.
         outState.putBoolean(KEY_IS_PLAYING, mediaPlayer.isPlaying());
         outState.putInt(KEY_CURRENT_POSITION, mediaPlayer.getCurrentPosition());
     }
@@ -103,8 +106,10 @@ public class NowPlayingActivity extends Activity
     {
         //Release media player to free resource
         mediaPlayer.release();
-        //stop handler thread
-        handler.removeCallbacks(updateProgress);
+        //remove callbacks for hander
+        updateProgressHandler.removeCallbacks(updateProgress);
+        //cancel rescaling of image
+        bitmapRescaleTask.cancel(true);
         super.onDestroy();
     }
 
@@ -121,7 +126,7 @@ public class NowPlayingActivity extends Activity
             imageViewPlay.setVisibility(View.GONE);
             imageViewPause.setVisibility(View.VISIBLE);
             mediaPlayer.start();
-            handler.postDelayed(updateProgress, 100);
+            updateProgressHandler.postDelayed(updateProgress, 100);
         }
     }
 
@@ -181,28 +186,20 @@ public class NowPlayingActivity extends Activity
 
     }
 
-//    /**
-//     * This interface is responsible for updating seek bar and
-//     * elapsed time of currently playing song.
-//     */
-//    private Runnable UpdateProgress = new Runnable()
-//    {
-//        @Override
-//        public void run()
-//        {
-//            long currentPosition = mediaPlayer.getCurrentPosition();
-//            long progress = (long) (Math.floor(currentPosition*100F / totalDuration));
-//
-//            //Update Seek bar
-//            seekBar.setProgress((int) progress);
-//
-//            //Update elapsed time
-//            long currentMinute = TimeUnit.MILLISECONDS.toMinutes(currentPosition);
-//            long currentSecond = TimeUnit.MILLISECONDS.toSeconds(currentPosition) % 60L;
-//            textViewCurrentPosition.setText(String.format("%02d:%02d",currentMinute,currentSecond));
-//
-//            //Repeat this every 100ms
-//            handler.postDelayed(this, 100);
-//        }
-//    };
+    public void testFeature()
+    {
+        String filePath = Environment.getExternalStorageDirectory().getPath()+"/artists/Coldplay.jpg";
+        bitmapRescaleTask = new BitmapRescaleTask(imageViewBackground,this,filePath);
+        bitmapRescaleTask.execute(1280,720);
+    }
+
+    public void onNext(View view)
+    {
+        updateProgressHandler.removeCallbacks(updateProgress);
+        mediaPlayer.release();
+        mediaPlayer = MediaPlayer.create(this, Uri.fromFile(new File(Environment.getExternalStorageDirectory().getPath()+"/Music/Native - 05 - I Lived (OneRepublic).mp3")));
+        mediaPlayer.start();
+        updateProgressHandler = new Handler();
+        updateProgress = new UpdateProgress(mediaPlayer,textViewCurrentPosition,seekBar);
+    }
 }

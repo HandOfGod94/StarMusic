@@ -65,14 +65,16 @@
                 android:layout_height="match_parent"
                 android:id="@+id/imageViewPlay"
                 android:src="@drawable/play"
-                android:onClick="onPlay"/>
+                android:onClick="onPlay"
+                android:visibility="visible"/>
 
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/imageViewPause"
                 android:src="@drawable/pause"
-                android:onClick="onPause"/>
+                android:onClick="onPause"
+                android:visibility="gone"/>
         </RelativeLayout>
 
         <ImageView
@@ -80,6 +82,7 @@
             android:layout_height="30dp"
             android:id="@+id/imageViewNext"
             android:src="@drawable/next"
+            android:onClick="onNext"
             android:layout_column="2"/>
     </TableRow>
 

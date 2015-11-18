@@ -23,8 +23,8 @@ public class UpdateProgress implements Runnable
     private long totalDuration;
 
     /**
-     * Creates a new UpdateProgress object and uses NowPlayingActivity.handler.
-     * This handler is static in nature and is required for continuous update at specified interval.
+     * Creates a new UpdateProgress object and uses NowPlayingActivity.updateProgressHandler.
+     * This updateProgressHandler is static in nature and is required for continuous update at specified interval.
      * It'll initializes object with passed arguments as it's refrences.
      * @param mediaPlayer Currently playing media player. Note: It must be a created MediaPlayer.
      * @param textViewCurrentPosition TextView which contains text for elapsed time
@@ -53,7 +53,7 @@ public class UpdateProgress implements Runnable
         textViewCurrentPosition.setText(String.format("%02d:%02d",currentMinute,currentSecond));
 
         //Repeat this every 100ms
-        NowPlayingActivity.handler.postDelayed(this, 100);
+        NowPlayingActivity.updateProgressHandler.postDelayed(this, 100);
 
     }
 }

@@ -3,15 +3,19 @@ package com.starlord.starmusic;
 import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.starlord.starmusic.com.starlord.starmusic.com.starlord.starmusic.services.BitmapRescaleTask;
+
+import java.io.File;
 
 
 /**
@@ -27,6 +31,7 @@ public class SongInfoFragment extends Fragment
     protected Bitmap albumArt;
 
     private TextView textViewTitle,textViewAlbum,textViewArtist;
+    private BitmapRescaleTask bitmapRescaleTask;
 
     public SongInfoFragment()
     {
@@ -38,7 +43,7 @@ public class SongInfoFragment extends Fragment
                              Bundle savedInstanceState)
     {
         fragmentView = inflater.inflate(R.layout.fragment_song_info,container,false);
-        Uri filePath = Uri.parse("android.resource://com.starlord.starmusic/" + R.raw.song );
+        Uri filePath = Uri.fromFile(new File(Environment.getExternalStorageDirectory().getPath()+"/Music/song.mp3"));
         textViewTitle = (TextView) fragmentView.findViewById(R.id.textViewTitle);
         textViewAlbum = (TextView) fragmentView.findViewById(R.id.textViewAlbum);
         textViewArtist = (TextView) fragmentView.findViewById(R.id.textViewArtist);
@@ -51,9 +56,16 @@ public class SongInfoFragment extends Fragment
         if(title!=null) textViewTitle.setText(titleString);
         if(album!=null) textViewAlbum.setText("Album: "+ album);
         if(artist!=null) textViewArtist.setText("Artist: " + artist);
-        if(albumArt!=null) imageViewAlbumArt.setImageBitmap(albumArt);
+//        if(albumArt!=null) imageViewAlbumArt.setImageBitmap(albumArt);
 
         return fragmentView;
+    }
+
+    @Override
+    public void onDestroy()
+    {
+        bitmapRescaleTask.cancel(true);
+        super.onDestroy();
     }
 
     /**
@@ -72,6 +84,12 @@ public class SongInfoFragment extends Fragment
         album = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUM);
         artist = metadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST);
         byte[] albumArtBytes = metadataRetriever.getEmbeddedPicture();
-        albumArt = BitmapFactory.decodeByteArray(albumArtBytes,0,albumArtBytes.length);
+        if(albumArtBytes!=null)
+        {
+//            InputStream inputStream = new ByteArrayInputStream(albumArtBytes);
+            ImageView imageViewAlbumArt = (ImageView) fragmentView.findViewById(R.id.imageViewAlbumArt);
+            bitmapRescaleTask = new BitmapRescaleTask(imageViewAlbumArt,getActivity(),albumArtBytes);
+            bitmapRescaleTask.execute(300,300);
+        }
     }
 }

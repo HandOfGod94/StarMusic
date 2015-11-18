@@ -12,9 +12,10 @@
         android:id="@+id/imageViewBackground"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/background"
         android:scaleType="centerCrop"
         android:alpha="0.40"/>
+
+    <!--android:src="@drawable/background"-->
 
     <fragment
         android:id="@+id/fragment_song_info"
